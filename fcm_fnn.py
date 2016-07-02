@@ -50,7 +50,7 @@ class Concept(object):
         self.sigma = []
         self.xi = []
         for i in range(numOfTerms):
-            self.C.append(random.uniform(0 , 1))
+            self.C.append(random.uniform(0, 1))
             self.sigma.append(random.uniform(0, 1))  # sigma > 0
             self.xi.append(random.uniform(0, 1))
 
@@ -143,7 +143,22 @@ class FCM_FNN(object):
                     iconcept.xi[ini] -= learnRate * deltaXi
 
                     # C
-                    iconcept.C[ini] -= learnRate * self.deltaC(ii, ini)
+                    deltaC = 0
+                    deltaSigma = 0
+                    for l, lconcept in enumerate(self.concepts):
+                        mlSumC = 0
+                        mlSumSigma = 0
+                        for ml in range(lconcept.numOfTerms):
+                            numerator = denominator = 0
+                            for ti, tconcept in enumerate(self.concepts):
+                                if ti != ml:
+                                    for tni in range(tconcept.numOfTerms):
+                                        numerator += self.layerf[3][l][ml][ti][tni] * tconcept.C[tni] * tconcept.sigma[tni]
+                                        denominator += self.layerf[3][l][ml][ti][tni] * tconcept.sigma[tni]
+                            delta_yl = lconcept.xi[ml]
+                            delta_x = (iconcept.C[ii] * iconcept.sigma[ii] * denominator - iconcept.sigma[ii] * numerator) / denominator ** 2
+                            delta_f_C = (self.layerx[2][ii][ini] * (2 * (self.layerx[1][ii] - iconcept.C[ini]) / iconcept.sigma[ii] ** 2))
+                            delta_f_Sigma 
 
                     # sigma
                     iconcept.sigma[ini] -= learnRate * self.deltaSigma(ii, ini)
